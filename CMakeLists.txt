@@ -1,21 +1,44 @@
-﻿# CMakeList.txt : CMake project for FixedPointDSP, include source and define
-# project specific logic here.
-#
-cmake_minimum_required (VERSION 3.8)
+﻿cmake_minimum_required(VERSION 3.14)
+project(FixedPointDSP LANGUAGES CXX)
 
-# Enable Hot Reload for MSVC compilers if supported.
-if (POLICY CMP0141)
-  cmake_policy(SET CMP0141 NEW)
-  set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT "$<IF:$<AND:$<C_COMPILER_ID:MSVC>,$<CXX_COMPILER_ID:MSVC>>,$<$<CONFIG:Debug,RelWithDebInfo>:EditAndContinue>,$<$<CONFIG:Debug,RelWithDebInfo>:ProgramDatabase>>")
-endif()
+# ----------------------------
+# C++ standard
+# ----------------------------
+set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-project ("FixedPointDSP")
+# ----------------------------
+# Project structure
+# ----------------------------
+# Your fixed-point headers live here
+include_directories(${PROJECT_SOURCE_DIR}/include)
 
-# Add source to this project's executable.
-add_executable (FixedPointDSP  "FixedPointDSP.h")
+# ----------------------------
+# GoogleTest
+# ----------------------------
+# Assumes you've manually placed GoogleTest under external/googletest
+add_subdirectory(external/googletest)
 
-if (CMAKE_VERSION VERSION_GREATER 3.12)
-  set_property(TARGET FixedPointDSP PROPERTY CXX_STANDARD 20)
-endif()
+# ----------------------------
+# Test executable
+# ----------------------------
+add_executable(FixedPointTests
+  tests/FixedPointTests.cpp
+)
 
-# TODO: Add tests and install targets if needed.
+# Link GoogleTest to the tests
+target_link_libraries(FixedPointTests
+  gtest_main
+)
+
+# Make sure the test target sees your include folder
+target_include_directories(FixedPointTests PRIVATE
+  ${PROJECT_SOURCE_DIR}/include
+)
+
+# ----------------------------
+# Enable test discovery (for Visual Studio and ctest)
+# ----------------------------
+enable_testing()
+include(GoogleTest)
+gtest_discover_tests(FixedPointTests)
