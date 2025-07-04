@@ -60,9 +60,9 @@ cmake --build build
 
 - [x] Cross-platform structure and .gitignore cleanup
 
-- [ ] Implement FixedPoint core class
+- [x] Implement FixedPoint core class
 
-- [ ] Add operator overloads and conversion functions
+- [x] Add operator overloads and conversion functions
 
 - [ ] Set up Google Test framework
 
@@ -70,9 +70,7 @@ cmake --build build
 
 - [ ] Add FIR filter class and verify sample responses
 
-- [ ] Add DFT or convolution module (stretch goal)
-
-- [ ] Create Python bindings with pybind11 (stretch goal)
+- [ ] Add DFT or convolution module
 
 ---
 
