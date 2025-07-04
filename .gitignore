@@ -44,3 +44,4 @@
 out/
 build/
 external/
+cmake-build-debug/
