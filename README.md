@@ -50,7 +50,7 @@ cmake --build build
 ### 🧪 Run Tests
 
 ```bash
-./build/test_fixed_point
+./build/FixedPointTests
 ```
 
 ---
