@@ -2,6 +2,8 @@
 
 #include <vector>
 #include <cmath>
+#include <numeric> 
+#include <stdexcept> 
 #include "fir_filter.hpp"
 
 namespace dsp {
@@ -67,14 +69,6 @@ namespace dsp {
         }
 
         return coefficients;
-    }
-
-
-        // Apply a window function (Hamming window)
-        for (std::size_t n = 0; n < num_taps; ++n) {
-            coefficients[n] *= static_cast<SampleType>(0.54 - 0.46 * std::cos(2 * M_PI * n / (num_taps - 1)));
-        }
-		return coefficients;
     }
 
     // Specific helper for high-pass filter generation
