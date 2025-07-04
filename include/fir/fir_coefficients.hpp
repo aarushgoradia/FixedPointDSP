@@ -2,8 +2,10 @@
 
 #include <vector>
 #include <cmath>
-#include <numeric> 
-#include <stdexcept> 
+#include <numeric>
+#include <numbers>
+#include <stdexcept>
+#include <algorithm>
 #include "fir_filter.hpp"
 
 namespace dsp {
@@ -50,7 +52,7 @@ namespace dsp {
             else {
                 double x = static_cast<double>(centered_n);
                 coefficients[n] = static_cast<SampleType>(
-                    std::sin(M_PI * 2 * normalized_cutoff * x) / (M_PI * x)
+                    std::sin(std::numbers::pi * 2 * normalized_cutoff * x) / (std::numbers::pi * x)
                     );
             }
         }
@@ -58,7 +60,7 @@ namespace dsp {
         // Apply Hamming window
         for (std::size_t n = 0; n < num_taps; ++n) {
             coefficients[n] *= static_cast<SampleType>(
-                0.54 - 0.46 * std::cos(2 * M_PI * n / (num_taps - 1))
+                0.54 - 0.46 * std::cos(2 * std::numbers::pi * n / (num_taps - 1))
                 );
         }
 
@@ -90,7 +92,7 @@ namespace dsp {
             else {
                 double x = static_cast<double>(centered_n);
                 coefficients[n] = static_cast<SampleType>(
-                    -std::sin(M_PI * 2 * normalized_cutoff * x) / (M_PI * x)
+                    -std::sin(std::numbers::pi * 2 * normalized_cutoff * x) / (std::numbers::pi * x)
                     );
             }
         }
@@ -98,7 +100,7 @@ namespace dsp {
         // Apply Hamming window
         for (std::size_t n = 0; n < num_taps; ++n) {
             coefficients[n] *= static_cast<SampleType>(
-                0.54 - 0.46 * std::cos(2 * M_PI * n / (num_taps - 1))
+                0.54 - 0.46 * std::cos(2 * std::numbers::pi * n / (num_taps - 1))
                 );
         }
 
@@ -106,19 +108,25 @@ namespace dsp {
     }
 
 
-    // Optional: Create FIRFilter directly from coefficients
     template<typename SampleType, std::size_t Taps>
-    FIRFilter<SampleType, Taps> make_lowpass_filter(double sample_rate,
-        double cutoff_freq) {
-		auto coeffs = generate_lowpass_coefficients<SampleType>(Taps, sample_rate, cutoff_freq);
-		return FIRFilter<SampleType, Taps>(coeffs);
+    FIRFilter<SampleType, Taps> make_lowpass_filter(double sample_rate, double cutoff_freq) {
+        // 1) generate a vector of length Taps
+        auto vec = generate_lowpass_coefficients<SampleType>(Taps, sample_rate, cutoff_freq);
+
+        // 2) copy into a std::array<SampleType,Taps>
+        std::array<SampleType, Taps> arr{};
+        std::copy_n(vec.begin(), Taps, arr.begin());
+
+        // 3) now call the FIRFilter constructor that takes an array
+        return FIRFilter<SampleType, Taps>(arr);
     }
 
     template<typename SampleType, std::size_t Taps>
-    FIRFilter<SampleType, Taps> make_highpass_filter(double sample_rate,
-        double cutoff_freq) {
-		auto coeffs = generate_highpass_coefficients<SampleType>(Taps, sample_rate, cutoff_freq);
-		return FIRFilter<SampleType, Taps>(coeffs);
+    FIRFilter<SampleType, Taps> make_highpass_filter(double sample_rate, double cutoff_freq) {
+        auto vec = generate_highpass_coefficients<SampleType>(Taps, sample_rate, cutoff_freq);
+        std::array<SampleType, Taps> arr{};
+        std::copy_n(vec.begin(), Taps, arr.begin());
+        return FIRFilter<SampleType, Taps>(arr);
     }
 
 } // namespace dsp

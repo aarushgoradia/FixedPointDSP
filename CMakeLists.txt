@@ -24,6 +24,7 @@ add_subdirectory(external/googletest)
 # ----------------------------
 add_executable(FixedPointTests
   tests/FixedPointTests.cpp
+  tests/FIRFilterTests.cpp
 )
 
 # Link GoogleTest to the tests
