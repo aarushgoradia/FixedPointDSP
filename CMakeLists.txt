@@ -28,7 +28,8 @@ add_executable(FixedPointTests
 
 # Link GoogleTest to the tests
 target_link_libraries(FixedPointTests
-  gtest_main
+  PRIVATE
+	GTest::gtest_main
 )
 
 # Make sure the test target sees your include folder

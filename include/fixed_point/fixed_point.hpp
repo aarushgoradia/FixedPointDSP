@@ -29,19 +29,22 @@ class FixedPoint {
 	static_assert(FractionalBits >= 0 && FractionalBits < TotalBits, "Fractional bits must be valid");
 
 private:
-	using StorageType = decltype(select_storage_type());
-
 	static constexpr auto select_storage_type() {
 		if constexpr (TotalBits <= 8) {
 			return int8_t{};
-		} else if constexpr (TotalBits <= 16) {
+		}
+		else if constexpr (TotalBits <= 16) {
 			return int16_t{};
-		} else if constexpr (TotalBits <= 32) {
+		}
+		else if constexpr (TotalBits <= 32) {
 			return int32_t{};
-		} else {
+		}
+		else {
 			return int64_t{};
 		}
 	}
+
+	using StorageType = decltype(select_storage_type());
 
 	StorageType value;
 

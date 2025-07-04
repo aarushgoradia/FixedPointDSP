@@ -64,13 +64,17 @@ cmake --build build
 
 - [x] Add operator overloads and conversion functions
 
-- [ ] Set up Google Test framework
+- [x] Set up Google Test framework
 
-- [ ] Write test coverage for all math operations
+- [x] Write test coverage for all constructors & operations
+
+- [ ] Write saturation overflow policies
+
+- [ ] Write tests for overflow policies
 
 - [ ] Add FIR filter class and verify sample responses
 
-- [ ] Add DFT or convolution module
+- [ ] Add DFT and convolution module
 
 ---
 

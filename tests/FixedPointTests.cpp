@@ -114,7 +114,7 @@ TEST(FixedPointTest, Multiplication) {
 
 	FixedPoint<16, 8> fp_negative(-1.5f);
 	result = fp1 * fp_negative;
-	EXPECT_EQ(result.raw(), -384); // (2.0 * -1.5) * 256
+	EXPECT_EQ(result.raw(), -768);
 
 	FixedPoint<16, 8> overflow1(16.0f);
 	FixedPoint<16, 8> overflow2(8.0f);
@@ -131,7 +131,6 @@ TEST(FixedPointTest, Division) {
 	EXPECT_FLOAT_EQ(result.to_float(), 2.0f);
 
 	FixedPoint<16, 8> fp_zero(0.0f);
-	result = fp1 / fp_zero; // Should throw an exception
 	EXPECT_THROW(fp1 / fp_zero, std::runtime_error);
 
 	FixedPoint<16, 8> fp_negative(-1.0f);
