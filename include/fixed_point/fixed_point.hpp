@@ -5,6 +5,24 @@
 #include <type_traits>
 #include <cmath>
 
+// ----------------- Type Promotion Helper -----------------
+template <typename T>
+struct Promote { using type = T; };
+
+template <>
+struct Promote<int8_t> { using type = int16_t; };
+
+template <>
+struct Promote<int16_t> { using type = int32_t; };
+
+template <>
+struct Promote<int32_t> { using type = int64_t; };
+
+template <>
+struct Promote<int64_t> { using type = int64_t; };
+
+
+// ----------------- Fixed Point Class Template -----------------
 template<int TotalBits, int FractionalBits>
 class FixedPoint {
 	static_assert(TotalBits > 0, "Total bits must be positive");
@@ -92,26 +110,41 @@ public:
 	// Addition, subtraction, multiplication, and division
 	FixedPoint operator+(const FixedPoint& other) const {
 		FixedPoint result;
-		result.value = this->value + other.value;
+		using PromotedType = typename Promote<StorageType>::type;
+
+		PromotedType this_value = static_cast<PromotedType>(this->value);
+		PromotedType other_value = static_cast<PromotedType>(other.value);
+
+		result.value = static_cast<StorageType>(this_value + other_value);
 		return result;
 	}
 
 	FixedPoint operator-(const FixedPoint& other) const {
 		FixedPoint result;
-		result.value = this->value - other.value;
+		using PromotedType = typename Promote<StorageType>::type;
+
+		PromotedType this_value = static_cast<PromotedType>(this->value);
+		PromotedType other_value = static_cast<PromotedType>(other.value);
+
+		result.value = static_cast<StorageType>(this_value - other_value);
 		return result;
 	}
 
-	// Todo: Handle overflow/underflow cases if necessary
 	FixedPoint operator*(const FixedPoint& other) const {
 		FixedPoint result;
+		using PromotedType = typename Promote<StorageType>::type;
+
+		PromotedType this_value = static_cast<PromotedType>(this->value);
+		PromotedType other_value = static_cast<PromotedType>(other.value);
+
 		// Multiply and then shift right by FractionalBits to adjust for fixed-point
-		result.value = (this->value * other.value) >> FractionalBits;
+		result.value = static_cast<StorageType>((this_value * other_value) >> FractionalBits);
 		return result;
 	}
 
 	FixedPoint operator/(const FixedPoint& other) const {
 		FixedPoint result;
+
 		// Divide and then shift left by FractionalBits to adjust for fixed-point
 		if (other.value == 0) {
 			throw std::runtime_error("Division by zero, NAN");
@@ -122,17 +155,32 @@ public:
 
 	// Compound assignment operators
 	FixedPoint& operator+=(const FixedPoint& other) {
-		this->value += other.value;
+		using PromotedType = typename Promote<StorageType>::type;
+
+		PromotedType this_value = static_cast<PromotedType>(this->value);
+		PromotedType other_value = static_cast<PromotedType>(other.value);
+
+		this->value = static_cast<StorageType>(this_value += other_value);
 		return *this;
 	}
 
 	FixedPoint& operator-=(const FixedPoint& other) {
-		this->value -= other.value;
+		using PromotedType = typename Promote<StorageType>::type;
+
+		PromotedType this_value = static_cast<PromotedType>(this->value);
+		PromotedType other_value = static_cast<PromotedType>(other.value);
+
+		this->value = static_cast<StorageType>(this_value -= other_value);
 		return *this;
 	}
 
 	FixedPoint& operator*=(const FixedPoint& other) {
-		this->value = (this->value * other.value) >> FractionalBits;
+		using PromotedType = typename Promote<StorageType>::type;
+
+		PromotedType this_value = static_cast<PromotedType>(this->value);
+		PromotedType other_value = static_cast<PromotedType>(other.value);
+
+		this->value = static_cast<StorageType>((this_value * other_value) >> FractionalBits);
 		return *this;
 	}
 
