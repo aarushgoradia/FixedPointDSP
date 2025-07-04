@@ -39,6 +39,7 @@
 
 # debug information files
 *.dwo
+*.xml
 
 .vs/
 out/
