@@ -1,6 +1,4 @@
 ﻿#include "fixed_point/fixed_point.hpp"
-#include "fixed_point/arithmetic_policies.hpp"
-#include "fixed_point/promote.hpp"
 #include <gtest/gtest.h>
 #include <sstream>
 #include <limits>

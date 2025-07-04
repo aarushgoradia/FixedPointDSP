@@ -70,7 +70,7 @@ cmake --build build
 
 - [X] Write saturation overflow policies
 
-- [ ] Write tests for overflow policies
+- [X] Write tests for overflow policies
 
 - [ ] Add FIR filter class and verify sample responses
 

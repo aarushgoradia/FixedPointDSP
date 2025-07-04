@@ -4,17 +4,16 @@
 #include <cstdint>
 #include <type_traits>
 #include <cmath>
+#include <stdexcept>
 #include "arithmetic_policies.hpp"
 
 
 // ----------------- Fixed Point Class Template -----------------
-template<int TotalBits, int FractionalBits, template<typename, typename, int> class OverFlowPolicy = WrapAroundPolicy>
+template<int TotalBits, int FractionalBits, template<typename, template<typename> class, int> class OverFlowPolicy = WrapAroundPolicy>
 class FixedPoint {
 	static_assert(TotalBits > 0, "Total bits must be positive");
 	static_assert(FractionalBits >= 0 && FractionalBits < TotalBits, "Fractional bits must be valid");
 
-public:
-	using StorageType = decltype(select_storage_type());
 private:
 	static constexpr auto select_storage_type() {
 		if constexpr (TotalBits <= 8) {
@@ -31,13 +30,14 @@ private:
 		}
 	}
 
-	
-	using Policy = OverFlowPolicy<StorageType, Promote<StorageType>, FractionalBits>;
+public:
+    using StorageType = decltype(select_storage_type());
 
-	StorageType value;
+private:
+    StorageType value;
+    using Policy = OverFlowPolicy<StorageType, Promote, FractionalBits>;
 
 public:
-
 	// -----------------Constructors-----------------
 	
 	// Default constructor initializes to zero

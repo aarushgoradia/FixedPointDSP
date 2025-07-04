@@ -36,6 +36,7 @@
 *.exe
 *.out
 *.app
+*.xml
 
 # debug information files
 *.dwo
@@ -44,3 +45,4 @@
 out/
 build/
 external/
+cmake-build-debug/
