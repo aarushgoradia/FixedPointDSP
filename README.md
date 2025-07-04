@@ -68,9 +68,9 @@ cmake --build build
 
 - [x] Write test coverage for all constructors & operations
 
-- [ ] Write saturation overflow policies
+- [X] Write saturation overflow policies
 
-- [ ] Write tests for overflow policies
+- [X] Write tests for overflow policies
 
 - [ ] Add FIR filter class and verify sample responses
 

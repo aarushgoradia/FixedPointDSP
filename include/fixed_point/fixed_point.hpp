@@ -4,26 +4,12 @@
 #include <cstdint>
 #include <type_traits>
 #include <cmath>
-
-// ----------------- Type Promotion Helper -----------------
-template <typename T>
-struct Promote { using type = T; };
-
-template <>
-struct Promote<int8_t> { using type = int16_t; };
-
-template <>
-struct Promote<int16_t> { using type = int32_t; };
-
-template <>
-struct Promote<int32_t> { using type = int64_t; };
-
-template <>
-struct Promote<int64_t> { using type = int64_t; };
+#include <stdexcept>
+#include "arithmetic_policies.hpp"
 
 
 // ----------------- Fixed Point Class Template -----------------
-template<int TotalBits, int FractionalBits>
+template<int TotalBits, int FractionalBits, template<typename, template<typename> class, int> class OverFlowPolicy = WrapAroundPolicy>
 class FixedPoint {
 	static_assert(TotalBits > 0, "Total bits must be positive");
 	static_assert(FractionalBits >= 0 && FractionalBits < TotalBits, "Fractional bits must be valid");
@@ -44,9 +30,12 @@ private:
 		}
 	}
 
-	using StorageType = decltype(select_storage_type());
+public:
+    using StorageType = decltype(select_storage_type());
 
-	StorageType value;
+private:
+    StorageType value;
+    using Policy = OverFlowPolicy<StorageType, Promote, FractionalBits>;
 
 public:
 	// -----------------Constructors-----------------
@@ -113,77 +102,44 @@ public:
 	// Addition, subtraction, multiplication, and division
 	FixedPoint operator+(const FixedPoint& other) const {
 		FixedPoint result;
-		using PromotedType = typename Promote<StorageType>::type;
-
-		PromotedType this_value = static_cast<PromotedType>(this->value);
-		PromotedType other_value = static_cast<PromotedType>(other.value);
-
-		result.value = static_cast<StorageType>(this_value + other_value);
+		result.value = Policy::add(this->value, other.value);
 		return result;
 	}
 
 	FixedPoint operator-(const FixedPoint& other) const {
 		FixedPoint result;
-		using PromotedType = typename Promote<StorageType>::type;
-
-		PromotedType this_value = static_cast<PromotedType>(this->value);
-		PromotedType other_value = static_cast<PromotedType>(other.value);
-
-		result.value = static_cast<StorageType>(this_value - other_value);
+		result.value = Policy::sub(this->value, other.value);
 		return result;
 	}
 
 	FixedPoint operator*(const FixedPoint& other) const {
 		FixedPoint result;
-		using PromotedType = typename Promote<StorageType>::type;
-
-		PromotedType this_value = static_cast<PromotedType>(this->value);
-		PromotedType other_value = static_cast<PromotedType>(other.value);
-
-		// Multiply and then shift right by FractionalBits to adjust for fixed-point
-		result.value = static_cast<StorageType>((this_value * other_value) >> FractionalBits);
+		result.value = Policy::mul(this->value, other.value);
 		return result;
 	}
 
 	FixedPoint operator/(const FixedPoint& other) const {
-		FixedPoint result;
-
-		// Divide and then shift left by FractionalBits to adjust for fixed-point
 		if (other.value == 0) {
 			throw std::runtime_error("Division by zero, NAN");
 		}
-		result.value = (this->value << FractionalBits) / other.value;
+		FixedPoint result;
+		result.value = Policy::div(this->value, other.value);
 		return result;
 	}
 
 	// Compound assignment operators
 	FixedPoint& operator+=(const FixedPoint& other) {
-		using PromotedType = typename Promote<StorageType>::type;
-
-		PromotedType this_value = static_cast<PromotedType>(this->value);
-		PromotedType other_value = static_cast<PromotedType>(other.value);
-
-		this->value = static_cast<StorageType>(this_value += other_value);
+		value = Policy::add(value, other.value);
 		return *this;
 	}
 
 	FixedPoint& operator-=(const FixedPoint& other) {
-		using PromotedType = typename Promote<StorageType>::type;
-
-		PromotedType this_value = static_cast<PromotedType>(this->value);
-		PromotedType other_value = static_cast<PromotedType>(other.value);
-
-		this->value = static_cast<StorageType>(this_value -= other_value);
+		value = Policy::sub(value, other.value);
 		return *this;
 	}
 
 	FixedPoint& operator*=(const FixedPoint& other) {
-		using PromotedType = typename Promote<StorageType>::type;
-
-		PromotedType this_value = static_cast<PromotedType>(this->value);
-		PromotedType other_value = static_cast<PromotedType>(other.value);
-
-		this->value = static_cast<StorageType>((this_value * other_value) >> FractionalBits);
+		value = Policy::mul(value, other.value);
 		return *this;
 	}
 
@@ -191,7 +147,7 @@ public:
 		if (other.value == 0) {
 			throw std::runtime_error("Division by zero, NAN");
 		}
-		this->value = (this->value << FractionalBits) / other.value;
+		value = Policy::div(value, other.value);
 		return *this;
 	}
 
