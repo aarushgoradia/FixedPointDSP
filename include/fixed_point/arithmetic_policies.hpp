@@ -21,7 +21,7 @@ struct WrapAroundPolicy {
 
 	template <typename T>
 	static T mul(T a, T b) {
-		return (a * b) >> fractional_bits;
+		return (a * b) >> FractionalBits;
 	}
 
 	template <typename T>
@@ -29,7 +29,7 @@ struct WrapAroundPolicy {
 		if (b == 0) {
 			throw std::runtime_error("Division by zero");
 		}
-		return (a << fractional_bits) / b;
+		return (a << FractionalBits) / b;
 	}
 };
 

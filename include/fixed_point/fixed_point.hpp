@@ -13,6 +13,8 @@ class FixedPoint {
 	static_assert(TotalBits > 0, "Total bits must be positive");
 	static_assert(FractionalBits >= 0 && FractionalBits < TotalBits, "Fractional bits must be valid");
 
+public:
+	using StorageType = decltype(select_storage_type());
 private:
 	static constexpr auto select_storage_type() {
 		if constexpr (TotalBits <= 8) {
@@ -29,12 +31,13 @@ private:
 		}
 	}
 
-	using StorageType = decltype(select_storage_type());
+	
 	using Policy = OverFlowPolicy<StorageType, Promote<StorageType>, FractionalBits>;
 
 	StorageType value;
 
 public:
+
 	// -----------------Constructors-----------------
 	
 	// Default constructor initializes to zero

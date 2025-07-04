@@ -68,7 +68,7 @@ cmake --build build
 
 - [x] Write test coverage for all constructors & operations
 
-- [ ] Write saturation overflow policies
+- [X] Write saturation overflow policies
 
 - [ ] Write tests for overflow policies
 
