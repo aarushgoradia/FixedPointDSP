@@ -16,23 +16,6 @@ namespace dsp {
         HighPass
     };
 
-    // General coefficient generator for any FIR filter
-    template<typename SampleType>
-    std::vector<SampleType> generate_fir_coefficients(FilterType type,
-        std::size_t num_taps,
-        double sample_rate,
-        double cutoff_freq,
-        double cutoff_freq2 = 0.0) {
-        switch (type) {
-            case FilterType::LowPass:
-                return generate_lowpass_coefficients<SampleType>(num_taps, sample_rate, cutoff_freq);
-            case FilterType::HighPass:
-                return generate_highpass_coefficients<SampleType>(num_taps, sample_rate, cutoff_freq);
-            default:
-                throw std::invalid_argument("Unsupported filter type");
-		}
-    }
-
 	// Specific helper for low-pass filter generation
     template<typename SampleType>
     std::vector<SampleType> generate_lowpass_coefficients(std::size_t num_taps,
@@ -127,6 +110,23 @@ namespace dsp {
         std::array<SampleType, Taps> arr{};
         std::copy_n(vec.begin(), Taps, arr.begin());
         return FIRFilter<SampleType, Taps>(arr);
+    }
+
+    // General coefficient generator for any FIR filter
+    template<typename SampleType>
+    std::vector<SampleType> generate_fir_coefficients(FilterType type,
+                                                      std::size_t num_taps,
+                                                      double sample_rate,
+                                                      double cutoff_freq,
+                                                      double cutoff_freq2 = 0.0) {
+        switch (type) {
+            case FilterType::LowPass:
+                return generate_lowpass_coefficients<SampleType>(num_taps, sample_rate, cutoff_freq);
+            case FilterType::HighPass:
+                return generate_highpass_coefficients<SampleType>(num_taps, sample_rate, cutoff_freq);
+            default:
+                throw std::invalid_argument("Unsupported filter type");
+        }
     }
 
 } // namespace dsp
