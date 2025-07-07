@@ -2,7 +2,7 @@
 
 **FixedPointDSP** is a modern, header-only C++23 library for fixed-point arithmetic and basic digital signal processing (DSP) components. It is designed for embedded, simulation, and hardware-aligned applications where floating-point math is either too expensive or unavailable.
 
-> 🚧 This project is under active development by [@aarushgoradia](https://github.com/aarushgoradia) as a deep dive into C++ templates, constexpr math, DSP principles, and clean software architecture.
+> 🚧 This project is under active development by [@aarushgoradia](https://github.com/aarushgoradia)
 
 ---
 
@@ -12,23 +12,29 @@
 - 🧮 Custom `FixedPoint<TotalBits, FractionBits, OverflowPolicy>` number type
 - ➕ Arithmetic operator support with compile-time correctness
 - 🧪 Unit tested using Google Test
-- 🎚️ FIR filter and basic DSP modules
+- 🎚️ FIR filter and basic DSP modules (convolution, DFT))
 - 🧰 Cross-platform via CMake — builds on Windows, macOS, Linux
 
 ---
 
 ## 📁 Project Structure
 ```
-include/fixedpoint/ → Core headers
-├── fixed_point.hpp → FixedPoint number class
+include/
+├── fixed_point/
+│ ├── fixed_point.hpp → Core FixedPoint class
+│ ├── arithmetic_policies.hpp → Overflow policies
+│ ├── promote.hpp → Promotion rules for arithmetic
 ├── filters/
-│ └── fir.hpp → FIR filter implementation
-└── math/
-└── dft.hpp → DFT or convolution helpers (future)
+│ └── fir_filter_.hpp → FIR filter implementation
+| └── fir_coefficients_.hp → FIR filter implementation
+└-- dsp/
+  ├── convolution.hpp → Convolution operation
+  └── dft.hpp → Discrete Fourier Transform (DFT) module (TODO)
 
 tests/ → Unit tests
-├── test_fixed_point.cpp
-└── test_fir.cpp
+├── FixedPointTests.cpp
+└── FIRFilterTests.cpp
+└── ConvolutionTests.cpp
 ```
 ---
 
@@ -72,9 +78,11 @@ cmake --build build
 
 - [X] Write tests for overflow policies
 
-- [ ] Add FIR filter class and verify sample responses
+- [X] Add FIR filter class and verify sample responses
 
-- [ ] Add DFT and convolution module
+- [X] Add and test convolution module
+
+- [ ] Add DFT and FFT modules, and test
 
 ---
 
