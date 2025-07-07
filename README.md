@@ -82,7 +82,9 @@ cmake --build build
 
 - [X] Add and test convolution module
 
-- [ ] Add DFT and FFT modules, and test
+- [X] Add DFT and test
+
+- [ ] Add FFT and test
 
 ---
 
