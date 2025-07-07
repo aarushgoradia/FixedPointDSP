@@ -108,6 +108,8 @@ Measured on a 2024 Intel i7, FixedPoint <16,8> saturation policy.
 
 - [x] FFT & performance benchmarks
 
+---
+
 ## 🤔 Why Fixed-Point?
 - Deterministic, bounded precision
 
@@ -115,8 +117,12 @@ Measured on a 2024 Intel i7, FixedPoint <16,8> saturation policy.
 
 - Ideal for embedded DSP, FPGA/ASIC simulation, and real-time systems
 
+---
+
 ## 📝 License
 MIT © 2025 Aarush Goradia
+
+---
 
 ## 🙋 Author
 Aarush Goradia
