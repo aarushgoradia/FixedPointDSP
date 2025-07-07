@@ -1,108 +1,123 @@
 ﻿# FixedPointDSP
 
-**FixedPointDSP** is a modern, header-only C++23 library for fixed-point arithmetic and basic digital signal processing (DSP) components. It is designed for embedded, simulation, and hardware-aligned applications where floating-point math is either too expensive or unavailable.
+**FixedPointDSP** is a modern, header-only C++23 library providing  
+high-performance fixed-point arithmetic and essential DSP building-blocks.  
+It’s ideal for embedded targets, hardware-aligned simulation, and any context  
+where floating-point is too heavy or unavailable.
 
-> 🚧 This project is under active development by [@aarushgoradia](https://github.com/aarushgoradia)
-
----
-
-## ✨ Features
-
-- 📦 Header-only design — no linking required
-- 🧮 Custom `FixedPoint<TotalBits, FractionBits, OverflowPolicy>` number type
-- ➕ Arithmetic operator support with compile-time correctness
-- 🧪 Unit tested using Google Test
-- 🎚️ FIR filter and basic DSP modules (convolution, DFT))
-- 🧰 Cross-platform via CMake — builds on Windows, macOS, Linux
+> by [@aarushgoradia](https://github.com/aarushgoradia)
 
 ---
 
-## 📁 Project Structure
+## 🌟 Highlights
+
+- **Header-only** (just include—no linking or external dependencies)
+- **Templated** `FixedPoint<TotalBits, FracBits, OverflowPolicy>`
+  - Arbitrary bit-width, configurable overflow (wrapping, saturation)
+- **Operator overloads** with compile-time safety (C++23 concepts)
+- **DSP primitives**:
+  - FIR filter  
+  - Convolution (linear & circular)  
+  - **DFT** & **FFT**  
+- **Unit-tested** with Google Test and benchmarked with Google Benchmark
+- **Cross-platform** via CMake (Windows, Linux, macOS)
+
+---
+
+## 📂 Project Layout
 ```
-include/
-├── fixed_point/
-│ ├── fixed_point.hpp → Core FixedPoint class
-│ ├── arithmetic_policies.hpp → Overflow policies
-│ ├── promote.hpp → Promotion rules for arithmetic
-├── filters/
-│ └── fir_filter_.hpp → FIR filter implementation
-| └── fir_coefficients_.hp → FIR filter implementation
-└-- dsp/
-  ├── convolution.hpp → Convolution operation
-  └── dft.hpp → Discrete Fourier Transform (DFT) module (TODO)
-
-tests/ → Unit tests
-├── FixedPointTests.cpp
-└── FIRFilterTests.cpp
-└── ConvolutionTests.cpp
+├── include/
+│ ├── fixed_point/
+│ │ ├── fixed_point.hpp # core class
+│ │ ├── arithmetic_policies.hpp # overflow rules
+│ │ └── promote.hpp # promotion logic
+│ ├── fir/ # FIR filter headers
+│ │ ├── fir_filter.hpp # FIR filter implementation
+│ │ └── fir_coefficients.hpp # coefficient helpers
+│ └── dsp/
+│ ├── convolution.hpp # linear & circular conv.
+│ ├── dft.hpp # O(N²) DFT
+│ └── fft.hpp # O(N log N) FFT
+├── tests/ # Google Test unit-tests
+│ ├── FixedPointTests.cpp
+│ ├── FIRFilterTests.cpp
+│ ├── ConvolutionTests.cpp
+│ ├── DFTTests.cpp
+│ └── FFTTests.cpp
+├── benchmarks/ # Google Benchmark performance tests
+│ └── fft_benchmark.cpp
+├── external/ # third-party (googletest, benchmark)
+├── CMakeLists.txt
+└── README.md
 ```
+
 ---
 
-## 🛠️ Getting Started
+## 🚀 Getting Started
 
-### ✅ Requirements
+### Prerequisites
 
-- C++23-compliant compiler (GCC 13+, Clang 16+, MSVC 2022+)
-- CMake ≥ 3.20
-- (Optional) Google Test for unit testing
+- **Compiler**: C++23 support (GCC 13+, Clang 16+, MSVC 2022+)  
+- **Build**: CMake ≥ 3.20  
+- **(Optional)** Google Test & Google Benchmark (included as `external/`)
 
-### 🔧 Build
+### Build & Test
 
+1. Configure & build
 ```bash
-cmake -B build -DCMAKE_BUILD_TYPE=Debug
+cmake -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build
-``` 
-
-### 🧪 Run Tests
-
-```bash
-./build/FixedPointTests
 ```
 
+2. Run unit tests
+```bash
+ctest --output-on-failure
+```
+
+3. (Optional) Run FFT benchmark
+```bash
+./build/FFTBenchmark --benchmark_time_unit=ms
+```
+📈 Performance
+```
+ ------------------------------------------------------
+Benchmark            Time             CPU   Iterations
+------------------------------------------------------
+BM_DFT/128       0.527 ms        0.516 ms         1120
+BM_DFT/256        2.01 ms         2.04 ms          345
+BM_DFT/512        8.23 ms         8.33 ms           90
+BM_DFT/1024       42.6 ms         42.5 ms           18
+BM_FFT/128       0.008 ms        0.008 ms        89600
+BM_FFT/256       0.018 ms        0.018 ms        37333
+BM_FFT/512       0.041 ms        0.040 ms        17231
+BM_FFT/1024      0.092 ms        0.092 ms         7467
+```
+
+Measured on a 2024 Intel i7, FixedPoint <16,8> saturation policy.
+
 ---
 
-### 🎯 Roadmap
-- [x] Project scaffold with CMake + GitHub
+## 🛣️ Roadmap
+- [x] Core FixedPoint class & arithmetic
 
-- [x] Cross-platform structure and .gitignore cleanup
+- [x] Overflow policies (wrap, saturate)
 
-- [x] Implement FixedPoint core class
+- [x] FIR filter & convolution
 
-- [x] Add operator overloads and conversion functions
+- [x] DFT & unit tests
 
-- [x] Set up Google Test framework
+- [x] FFT & performance benchmarks
 
-- [x] Write test coverage for all constructors & operations
+## 🤔 Why Fixed-Point?
+- Deterministic, bounded precision
 
-- [X] Write saturation overflow policies
+- Low overhead on hardware without FPU
 
-- [X] Write tests for overflow policies
+- Ideal for embedded DSP, FPGA/ASIC simulation, and real-time systems
 
-- [X] Add FIR filter class and verify sample responses
+## 📝 License
+MIT © 2025 Aarush Goradia
 
-- [X] Add and test convolution module
-
-- [ ] Add DFT and FFT modules, and test
-
----
-
-### 🧠 Why Fixed-Point?
-Fixed-point arithmetic is essential in:
-
-- Embedded systems (where float is unavailable or too slow)
-
-- DSP hardware blocks (e.g., Verilog models, FPGAs)
-
-- Systems where deterministic, bounded precision is needed
-
-- This library simulates those behaviors in modern C++, useful for both software prototyping and hardware-aligned simulation.
-
-### 📜 License
-This project is released under the MIT License.
-Feel free to fork, modify, and build upon it.
-
-### 👋 Author
+## 🙋 Author
 Aarush Goradia
-Electrical & Computer Engineering student at Princeton
-Exploring hardware, C++, and systems design
-https://github.com/aarushgoradia
+B.S.E. in ECE, Princeton University — building C++, hardware, and systems.
