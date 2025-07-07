@@ -93,14 +93,14 @@ namespace dsp {
 
     template<typename SampleType, std::size_t Taps>
     FIRFilter<SampleType, Taps> make_lowpass_filter(double sample_rate, double cutoff_freq) {
-        // 1) generate a vector of length Taps
+        // Generate a vector of length Taps
         auto vec = generate_lowpass_coefficients<SampleType>(Taps, sample_rate, cutoff_freq);
 
-        // 2) copy into a std::array<SampleType,Taps>
+        // Copy into a std::array<SampleType,Taps>
         std::array<SampleType, Taps> arr{};
         std::copy_n(vec.begin(), Taps, arr.begin());
 
-        // 3) now call the FIRFilter constructor that takes an array
+        // Now call the FIRFilter constructor that takes an array
         return FIRFilter<SampleType, Taps>(arr);
     }
 
