@@ -102,11 +102,11 @@ Measured on a 2024 Intel i7, FixedPoint <16,8> saturation policy.
 
 - [x] Overflow policies (wrap, saturate)
 
-- [x] FIR filter & convolution
+- [x] FIR filter & convolution + unit tests
 
 - [x] DFT & unit tests
 
-- [x] FFT & performance benchmarks
+- [x] FFT, unit tests & performance benchmarks
 
 ## 🤔 Why Fixed-Point?
 - Deterministic, bounded precision
