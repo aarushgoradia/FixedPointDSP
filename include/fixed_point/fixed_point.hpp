@@ -99,6 +99,12 @@ public:
 
 	// -----------------Arithmetic Operators-----------------
 
+	// Unary minus operator
+	FixedPoint operator-() const {
+		FixedPoint zero{ 0 };
+		return zero - *this;
+	}
+
 	// Addition, subtraction, multiplication, and division
 	FixedPoint operator+(const FixedPoint& other) const {
 		FixedPoint result;

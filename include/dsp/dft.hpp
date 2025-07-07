@@ -11,18 +11,9 @@
 #include <cstddef>
 #include <cmath>
 #include <numbers>
+#include "concepts.hpp"
 
 namespace dsp {
-
-    // Minimal “arithmetic” concept for any number‐like sample type
-    template<typename SampleType>
-    concept Arithmetic =
-        requires(SampleType a, SampleType b) {
-            { SampleType{ 0 } } -> std::convertible_to<SampleType>;
-            { a + b } -> std::same_as<SampleType>;
-            { a* b } -> std::same_as<SampleType>;
-    };
-
     // Alias for a complex sample
     template<Arithmetic SampleType>
     using complex_sample = std::complex<SampleType>;
