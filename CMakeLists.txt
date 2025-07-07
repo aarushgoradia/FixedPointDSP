@@ -25,13 +25,18 @@ add_subdirectory(external/googletest)
 add_executable(FixedPointTests
   tests/FixedPointTests.cpp
   tests/FIRFilterTests.cpp
-  tests/ConvolutionTests.cpp)
+  tests/ConvolutionTests.cpp 
+  tests/DFTTests.cpp)
 
 # Link GoogleTest to the tests
 target_link_libraries(FixedPointTests
   PRIVATE
 	GTest::gtest_main
 )
+
+# Preprocessor definitions
+add_compile_definitions(_SILENCE_NONFLOATING_COMPLEX_DEPRECATION_WARNING)
+
 
 # Make sure the test target sees your include folder
 target_include_directories(FixedPointTests PRIVATE
