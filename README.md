@@ -9,10 +9,10 @@
 ## ✨ Features
 
 - 📦 Header-only design — no linking required
-- 🧮 Custom `FixedPoint<TotalBits, FractionBits>` number type
+- 🧮 Custom `FixedPoint<TotalBits, FractionBits, OverflowPolicy>` number type
 - ➕ Arithmetic operator support with compile-time correctness
-- 🧪 Unit tested using Google Test (planned)
-- 🎚️ FIR filter and basic DSP modules (WIP)
+- 🧪 Unit tested using Google Test
+- 🎚️ FIR filter and basic DSP modules
 - 🧰 Cross-platform via CMake — builds on Windows, macOS, Linux
 
 ---
@@ -22,7 +22,7 @@
 include/fixedpoint/ → Core headers
 ├── fixed_point.hpp → FixedPoint number class
 ├── filters/
-│ └── fir.hpp → FIR filter implementation (WIP)
+│ └── fir.hpp → FIR filter implementation
 └── math/
 └── dft.hpp → DFT or convolution helpers (future)
 
