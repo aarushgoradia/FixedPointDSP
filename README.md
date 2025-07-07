@@ -97,13 +97,9 @@ Fixed-point arithmetic is essential in:
 
 - This library simulates those behaviors in modern C++, useful for both software prototyping and hardware-aligned simulation.
 
----
-
 ### 📜 License
 This project is released under the MIT License.
 Feel free to fork, modify, and build upon it.
-
----
 
 ### 👋 Author
 Aarush Goradia
