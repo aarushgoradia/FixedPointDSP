@@ -9,7 +9,7 @@ where floating-point is too heavy or unavailable.
 
 ---
 
-## 🌟 Highlights
+## Highlights
 
 - **Header-only** (just include—no linking or external dependencies)
 - **Templated** `FixedPoint<TotalBits, FracBits, OverflowPolicy>`
@@ -24,7 +24,7 @@ where floating-point is too heavy or unavailable.
 
 ---
 
-## 📂 Project Layout
+## Project Layout
 ```
 ├── include/
 │ ├── fixed_point/
@@ -53,7 +53,7 @@ where floating-point is too heavy or unavailable.
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 
@@ -78,7 +78,7 @@ ctest --output-on-failure
 ```bash
 ./build/FFTBenchmark --benchmark_time_unit=ms
 ```
-📈 Performance
+Performance
 ```
  ------------------------------------------------------
 Benchmark            Time             CPU   Iterations
@@ -97,7 +97,7 @@ Measured on a 2024 Intel i7, FixedPoint <16,8> saturation policy.
 
 ---
 
-## 🛣️ Roadmap
+## Roadmap
 - [x] Core FixedPoint class & arithmetic
 
 - [x] Overflow policies (wrap, saturate)
@@ -107,20 +107,6 @@ Measured on a 2024 Intel i7, FixedPoint <16,8> saturation policy.
 - [x] DFT & unit tests
 
 - [x] FFT, unit tests & performance benchmarks
-
----
-
-## 🤔 Why Fixed-Point?
-- Deterministic, bounded precision
-
-- Low overhead on hardware without FPU
-
-- Ideal for embedded DSP, FPGA/ASIC simulation, and real-time systems
-
----
-
-## 📝 License
-MIT © 2025 Aarush Goradia
 
 ---
 
