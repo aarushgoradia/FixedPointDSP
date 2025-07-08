@@ -59,7 +59,11 @@ where floating-point is too heavy or unavailable.
 
 - **Compiler**: C++23 support (GCC 13+, Clang 16+, MSVC 2022+)  
 - **Build**: CMake ≥ 3.20  
-- **(Optional)** Google Test & Google Benchmark (included as `external/`)
+- **Google Test & Google Benchmark** (included as `external/`)
+  - Download [GoogleTest](https://github.com/google/googletest/releases) and [GoogleBenchmark](https://github.com/google/benchmark/releases)
+  - Create an external/ folder in the main repo folder
+  - Drag googletest-xxx/ and benchmark-xxx/ into the external/ folder
+  - Rename to googletest/ and benchmark/ (omit the version)
 
 ### Build & Test
 
