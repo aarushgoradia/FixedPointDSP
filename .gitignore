@@ -47,3 +47,5 @@ out/
 build/
 external/
 cmake-build-debug/
+.idea/
+.DS_Store
