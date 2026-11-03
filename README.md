@@ -1,119 +1,88 @@
 ﻿# FixedPointDSP
 
-**FixedPointDSP** is a modern, header-only C++23 library providing  
-high-performance fixed-point arithmetic and essential DSP building-blocks.  
-It’s ideal for embedded targets, hardware-aligned simulation, and any context  
-where floating-point is too heavy or unavailable.
+a header-only c++23 library for fixed-point math and the dsp blocks you build on it: fir filters, convolution, dft and fft. it's for when floats are too expensive or don't exist, like small embedded targets, or when you want a software model that matches the bit widths of real hardware.
 
-> by [@aarushgoradia](https://github.com/aarushgoradia)
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/q-format-dark.svg">
+  <img alt="FixedPoint<16, 8> bit layout: one sign bit, seven integer bits, eight fraction bits, holding 1.5" src="docs/q-format-light.svg">
+</picture>
 
----
+`FixedPoint<T, F>` is a `T`-bit signed integer with the binary point `F` bits from the right, so a raw value $q$ means
 
-## Highlights
-
-- **Header-only** (just include—no linking or external dependencies)
-- **Templated** `FixedPoint<TotalBits, FracBits, OverflowPolicy>`
-  - Arbitrary bit-width, configurable overflow (wrapping, saturation)
-- **Operator overloads** with compile-time safety (C++23 concepts)
-- **DSP primitives**:
-  - FIR filter  
-  - Convolution (linear & circular)  
-  - **DFT** & **FFT**  
-- **Unit-tested** with Google Test and benchmarked with Google Benchmark
-- **Cross-platform** via CMake (Windows, Linux, macOS)
-
----
-
-## Project Layout
-```
-├── include/
-│ ├── fixed_point/
-│ │ ├── fixed_point.hpp # core class
-│ │ ├── arithmetic_policies.hpp # overflow rules
-│ │ └── promote.hpp # promotion logic
-│ ├── fir/ # FIR filter headers
-│ │ ├── fir_filter.hpp # FIR filter implementation
-│ │ └── fir_coefficients.hpp # coefficient helpers
-│ └── dsp/
-│ ├── convolution.hpp # linear & circular conv.
-│ ├── dft.hpp # O(N²) DFT
-│ └── fft.hpp # O(N log N) FFT
-├── tests/ # Google Test unit-tests
-│ ├── FixedPointTests.cpp
-│ ├── FIRFilterTests.cpp
-│ ├── ConvolutionTests.cpp
-│ ├── DFTTests.cpp
-│ └── FFTTests.cpp
-├── benchmarks/ # Google Benchmark performance tests
-│ └── fft_benchmark.cpp
-├── external/ # third-party (googletest, benchmark)
-├── CMakeLists.txt
-└── README.md
+```math
+x = \frac{q}{2^{F}}, \qquad x \in \left[-2^{\,T-F-1},\ 2^{\,T-F-1} - 2^{-F}\right]
 ```
 
----
+for `FixedPoint<16, 8>` that's −128 to 127.996, in steps of 1/256. storage is the smallest of `int8_t` / `int16_t` / `int32_t` / `int64_t` that fits, picked at compile time.
 
-## Getting Started
+## what you get
 
-### Prerequisites
+- **any width:** `FixedPoint<TotalBits, FracBits, OverflowPolicy>`
+- **overflow is a policy:** `WrapAroundPolicy` (default, like hardware) or `SaturationPolicy` (clamps to min/max)
+- **operators:** `+ - * /` and the compound versions, with widening for multiply and divide so intermediates don't overflow
+- **dsp:** `FIRFilter`, linear + circular convolution, an O(n²) dft, and an O(n log n) radix-2 fft (`FFTPlan`, with precomputed twiddles)
+- **tested:** google test suites for the number type, fir, convolution, dft and fft, plus a google benchmark
 
-- **Compiler**: C++23 support (GCC 13+, Clang 16+, MSVC 2022+)  
-- **Build**: CMake ≥ 3.20  
-- **Google Test & Google Benchmark** (included as `external/`)
-  - Download [GoogleTest](https://github.com/google/googletest/releases) and [GoogleBenchmark](https://github.com/google/benchmark/releases)
-  - Create an external/ folder in the main repo folder
-  - Drag googletest-xxx/ and benchmark-xxx/ into the external/ folder
-  - Rename to googletest/ and benchmark/ (omit the version)
+## quick look
 
-### Build & Test
+```cpp
+#include "fixed_point/fixed_point.hpp"
+#include "fir/fir_filter.hpp"
+#include "dsp/fft.hpp"
 
-1. Configure & build
+using Q8_8 = FixedPoint<16, 8, SaturationPolicy>;
+
+Q8_8 a(1.5f), b(2.25f);
+Q8_8 c = a * b;              // 3.375
+c.raw();                     // 864, the int16_t underneath
+c.to_float();                // 3.375f
+
+std::array<Q8_8, 5> taps = {Q8_8(0.1f), Q8_8(0.2f), Q8_8(0.3f), Q8_8(0.2f), Q8_8(0.1f)};
+dsp::FIRFilter<Q8_8, 5> lowpass(taps);
+Q8_8 y = lowpass.process(Q8_8(1.0f));
+
+std::vector<std::complex<Q8_8>> x(256);
+dsp::FFTPlan<Q8_8> plan(x.size());
+plan.forward(x);             // in place
+plan.inverse(x);             // in place, scaled by 1/n
+```
+
+## speed
+
+fft vs the naive dft, `FixedPoint<16, 8>` with saturation, on a 2024 intel i7:
+
+| n | dft | fft | speedup |
+| ---: | ---: | ---: | ---: |
+| 128 | 0.527 ms | 0.008 ms | ~66x |
+| 256 | 2.01 ms | 0.018 ms | ~112x |
+| 512 | 8.23 ms | 0.041 ms | ~201x |
+| 1024 | 42.6 ms | 0.092 ms | ~463x |
+
+## build + test
+
+needs a c++23 compiler (gcc 13+, clang 16+, msvc 2022+) and cmake 3.20+. the tests expect googletest and google benchmark in `external/`:
+
 ```bash
+mkdir -p external
+git clone --depth 1 https://github.com/google/googletest external/googletest
+git clone --depth 1 https://github.com/google/benchmark external/benchmark
+
 cmake -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build
-```
-
-2. Run unit tests
-```bash
-ctest --output-on-failure
-```
-
-3. (Optional) Run FFT benchmark
-```bash
+ctest --test-dir build --output-on-failure
 ./build/FFTBenchmark --benchmark_time_unit=ms
 ```
-Performance
-```
- ------------------------------------------------------
-Benchmark            Time             CPU   Iterations
-------------------------------------------------------
-BM_DFT/128       0.527 ms        0.516 ms         1120
-BM_DFT/256        2.01 ms         2.04 ms          345
-BM_DFT/512        8.23 ms         8.33 ms           90
-BM_DFT/1024       42.6 ms         42.5 ms           18
-BM_FFT/128       0.008 ms        0.008 ms        89600
-BM_FFT/256       0.018 ms        0.018 ms        37333
-BM_FFT/512       0.041 ms        0.040 ms        17231
-BM_FFT/1024      0.092 ms        0.092 ms         7467
-```
 
-Measured on a 2024 Intel i7, FixedPoint <16,8> saturation policy.
+to just use the library, add `include/` to your include path. there's nothing to link.
 
----
+## what's where
 
-## Roadmap
-- [x] Core FixedPoint class & arithmetic
+| path | what |
+| --- | --- |
+| `include/fixed_point/` | `FixedPoint`, the overflow policies, type promotion |
+| `include/fir/` | fir filter + coefficient helpers |
+| `include/dsp/` | convolution, dft, fft |
+| `tests/` | google test suites |
+| `benchmarks/` | dft vs fft benchmark |
 
-- [x] Overflow policies (wrap, saturate)
-
-- [x] FIR filter & convolution + unit tests
-
-- [x] DFT & unit tests
-
-- [x] FFT, unit tests & performance benchmarks
-
----
-
-## 🙋 Author
-Aarush Goradia
-B.S.E. in ECE, Princeton University — building C++, hardware, and systems.
+mit license.
